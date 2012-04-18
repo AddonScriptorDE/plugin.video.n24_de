@@ -2,3 +2,4 @@
 1.0.1 - Changed addon.xml
 1.0.2 - Added <disclaimer> Tag to addon.xml
 1.0.3 - Changed Timeout
+1.0.4 - Fixed Livestream Problem

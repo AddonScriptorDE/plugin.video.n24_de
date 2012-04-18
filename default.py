@@ -48,6 +48,18 @@ def search():
           listVideos("http://www.n24.de/mediathek/api/box_renderer/GenerateSearchResultsBox?search_string="+search_string+"&page=1&limit=40")
 
 def liveStream():
+        try:
+          playLiveStream()
+        except:
+          try:
+            playLiveStream()
+          except:
+            try:
+              playLiveStream()
+            except:
+              xbmc.executebuiltin('XBMC.Notification(Fehler:,Livestream konnte nicht wiedergegeben werden!,5000)')
+
+def playLiveStream():
         content = getUrl("http://www.n24.de/mediathek/n24-livestream/stream.html")
         match=re.compile('filename&quot;:&quot;(.+?)&quot;', re.DOTALL).findall(content)
         filename=match[0]
