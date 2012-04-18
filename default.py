@@ -27,22 +27,18 @@ def catToUrl(cat):
         listVideos("http://www.n24.de/mediathek/api/box_renderer/GenerateExtendedBox?dataset_name="+cat+"&page=1&limit=40")
 
 def listVideos(url1):
-        try:
-          content = getUrl(url1)
-          match=re.compile('<a class="img_wrapper" href="(.+?)">\n                                    <img src="(.+?)" width="192" height="108" alt="(.+?)" />\n                                    <span class="play">abspielen</span>\n                                    <strong class="ellipsis">(.+?)</strong>\n                                </a>', re.DOTALL).findall(content)
-          for url,thumb,temp,title in match:
-                  addLink(temp,"http://www.n24.de"+url,2,"http://www.n24.de/mediathek/"+thumb)
-          match=re.compile('<span class="page_number">(.+?) von (.+?)</span>', re.DOTALL).findall(content)
-          currentPage=int(match[0][0])
-          maxPage=int(match[0][1])
-          if currentPage<maxPage:
-            urlNew=url1[:url1.find("&page=")]+"&page="+str(currentPage+1)+"&limit=40"
-            addDir("Next Page",urlNew,7,'')
-          xbmcplugin.endOfDirectory(pluginhandle)
-          if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(500)')
-        except:
-          pass
-        
+        content = getUrl(url1)
+        match=re.compile('<a class="img_wrapper" href="(.+?)">\n                                    <img src="(.+?)" width="192" height="108" alt="(.+?)" />\n                                    <span class="play">abspielen</span>\n                                    <strong class="ellipsis">(.+?)</strong>\n                                </a>', re.DOTALL).findall(content)
+        for url,thumb,temp,title in match:
+                addLink(temp,"http://www.n24.de"+url,2,"http://www.n24.de/mediathek/"+thumb)
+        match=re.compile('<span class="page_number">(.+?) von (.+?)</span>', re.DOTALL).findall(content)
+        currentPage=int(match[0][0])
+        maxPage=int(match[0][1])
+        if currentPage<maxPage:
+          urlNew=url1[:url1.find("&page=")]+"&page="+str(currentPage+1)+"&limit=40"
+          addDir("Next Page",urlNew,7,'')
+        xbmcplugin.endOfDirectory(pluginhandle)
+        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(500)')
 
 def search():
         keyboard = xbmc.Keyboard('', 'Video Suche')
@@ -52,29 +48,23 @@ def search():
           listVideos("http://www.n24.de/mediathek/api/box_renderer/GenerateSearchResultsBox?search_string="+search_string+"&page=1&limit=40")
 
 def liveStream():
-        try:
-          content = getUrl("http://www.n24.de/mediathek/n24-livestream/stream.html")
-          match=re.compile('filename&quot;:&quot;(.+?)&quot;', re.DOTALL).findall(content)
-          filename=match[0]
-          listitem = xbmcgui.ListItem(path="rtmp://pssimn24livefs.fplive.net/pssimn24live-live/"+filename+" swfUrl=http://www.n24.de/media/flash/homeplayer_swf.swf live=true timeout=60")
-          return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-        except:
-          pass
+        content = getUrl("http://www.n24.de/mediathek/n24-livestream/stream.html")
+        match=re.compile('filename&quot;:&quot;(.+?)&quot;', re.DOTALL).findall(content)
+        filename=match[0]
+        listitem = xbmcgui.ListItem(path="rtmp://pssimn24livefs.fplive.net/pssimn24live-live/"+filename+" swfUrl=http://www.n24.de/media/flash/homeplayer_swf.swf live=true timeout=60")
+        return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 def playVideo(url):
-        try:
-          content = getUrl(url)
-          match=re.compile('filename&quot;:&quot;(.+?)&quot;', re.DOTALL).findall(content)
-          filename=match[0]
-          listitem = xbmcgui.ListItem(path="rtmp://pssimn24livefs.fplive.net/pssimn24/"+filename)
-          return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
-        except:
-          pass
+        content = getUrl(url)
+        match=re.compile('filename&quot;:&quot;(.+?)&quot;', re.DOTALL).findall(content)
+        filename=match[0]
+        listitem = xbmcgui.ListItem(path="rtmp://pssimn24livefs.fplive.net/pssimn24/"+filename)
+        return xbmcplugin.setResolvedUrl(pluginhandle, True, listitem)
 
 def getUrl(url):
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:11.0) Gecko/20100101 Firefox/11.0')
-        response = urllib2.urlopen(req)
+        response = urllib2.urlopen(req,timeout=5)
         link=response.read()
         response.close()
         return link
