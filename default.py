@@ -1,11 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcgui,sys
+import urllib,urllib2,re,xbmcplugin,xbmcgui,sys,xbmcaddon
 
 pluginhandle = int(sys.argv[1])
+settings = xbmcaddon.Addon(id='plugin.video.n24_de')
+translation = settings.getLocalizedString
 
 def index():
-        addDir("Meistgesehen","most_clicked",1,"")
+        addDir(translation(30001),"most_clicked",1,"")
         addDir("Dokumentationen","doku",1,"")
         addDir("Reportagen","reportage",1,"")
         addDir("Magazine","magazin",1,"")
@@ -18,10 +20,9 @@ def index():
         addDir("Spezial","spezial",1,"")
         addDir("Auto","auto",1,"")
         addDir("Talks","talk",1,"")
-        addDir("N24 Videosuche","search",8,"")
+        addDir("N24 "+str(translation(30002)),"search",8,"")
         addLink("N24 Live Stream","live",9,"")
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(50)')
 
 def catToUrl(cat):
         listVideos("http://www.n24.de/mediathek/api/box_renderer/GenerateExtendedBox?dataset_name="+cat+"&page=1&limit=40")
@@ -38,7 +39,6 @@ def listVideos(url1):
           urlNew=url1[:url1.find("&page=")]+"&page="+str(currentPage+1)+"&limit=40"
           addDir("Next Page",urlNew,7,'')
         xbmcplugin.endOfDirectory(pluginhandle)
-        if (xbmc.getSkinDir() == "skin.confluence" or xbmc.getSkinDir() == "skin.touched"): xbmc.executebuiltin('Container.SetViewMode(500)')
 
 def search():
         keyboard = xbmc.Keyboard('', 'Video Suche')
