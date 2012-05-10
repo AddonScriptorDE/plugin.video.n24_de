@@ -57,7 +57,7 @@ def liveStream():
             try:
               playLiveStream()
             except:
-              xbmc.executebuiltin('XBMC.Notification(Fehler:,Livestream konnte nicht wiedergegeben werden!,5000)')
+              xbmc.executebuiltin('XBMC.Notification(Info,'+str(translation(30001))+',5000)')
 
 def playLiveStream():
         content = getUrl("http://www.n24.de/mediathek/n24-livestream/stream.html")
